@@ -1,0 +1,95 @@
+version: '3'
+services:
+  zookeeper101:
+    image: zookeeper:3.5
+    container_name: zookeeper101
+    ports:
+      - 2181:2181
+    environment:
+        ZOO_MY_ID: 1
+        ZOO_PORT: 2181
+        
+  kafka101:
+    image: wurstmeister/kafka:2.12-2.1.0
+    container_name: kafka101
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 101
+      KAFKA_LISTENERS: INTERNAL_LISTENER://0.0.0.0:19092,EXTERNAL_LISTENER://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL_LISTENER://kafka101:19092,EXTERNAL_LISTENER://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_LISTENER:PLAINTEXT,EXTERNAL_LISTENER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL_LISTENER
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper101:2181
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+    depends_on:
+      - zookeeper101
+
+  kafka102:
+    image: wurstmeister/kafka:2.12-2.1.0
+    container_name: kafka102
+    ports:
+      - 9093:9093
+    environment:
+      KAFKA_BROKER_ID: 102
+      KAFKA_LISTENERS: INTERNAL_LISTENER://0.0.0.0:19093,EXTERNAL_LISTENER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL_LISTENER://kafka102:19093,EXTERNAL_LISTENER://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_LISTENER:PLAINTEXT,EXTERNAL_LISTENER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL_LISTENER
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper101:2181
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+    depends_on:
+      - zookeeper101
+
+  zookeeper201:
+    image: zookeeper:3.5
+    container_name: zookeeper201
+    ports:
+      - 2182:2182
+    environment:
+        ZOO_MY_ID: 1
+        ZOO_PORT: 2182
+
+  kafka201:
+    image: wurstmeister/kafka:2.12-2.1.0
+    container_name: kafka201
+    ports:
+      - 9094:9094
+    environment:
+      KAFKA_BROKER_ID: 201
+      KAFKA_LISTENERS: INTERNAL_LISTENER://0.0.0.0:19094,EXTERNAL_LISTENER://0.0.0.0:9094
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL_LISTENER://kafka201:19094,EXTERNAL_LISTENER://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_LISTENER:PLAINTEXT,EXTERNAL_LISTENER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL_LISTENER
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper201:2182
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+    depends_on:
+      - zookeeper201
+
+  kafka202:
+    image: wurstmeister/kafka:2.12-2.1.0
+    container_name: kafka202
+    ports:
+      - 9095:9095
+    environment:
+      KAFKA_BROKER_ID: 202
+      KAFKA_LISTENERS: INTERNAL_LISTENER://0.0.0.0:19095,EXTERNAL_LISTENER://0.0.0.0:9095
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL_LISTENER://kafka202:19095,EXTERNAL_LISTENER://localhost:9095
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_LISTENER:PLAINTEXT,EXTERNAL_LISTENER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL_LISTENER
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper201:2182
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+    depends_on:
+      - zookeeper201
+
+  kafka-manager:
+    image: sheepkiller/kafka-manager
+    container_name: kafka-manager
+    ports:
+      - 9000:9000
+    environment:
+      ZK_HOSTS: zookeeper101:2181,zookeeper201:2182
